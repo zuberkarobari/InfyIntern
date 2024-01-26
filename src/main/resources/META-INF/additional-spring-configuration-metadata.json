@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "appender.console.type",
+  "type": "java.lang.String",
+  "description": "A description for 'appender.console.type'"
+}]}
