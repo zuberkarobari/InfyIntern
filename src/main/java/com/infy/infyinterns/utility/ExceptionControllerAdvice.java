@@ -29,17 +29,16 @@ public class ExceptionControllerAdvice
 
 	@Autowired
     private Environment environment;
-
-    // add appropriate annotation
 	@ExceptionHandler(InfyInternException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseEntity<ErrorInfo> meetingSchedulerExceptionHandler(InfyInternException exception) {
+	public ResponseEntity<ErrorInfo> infyInternException(InfyInternException exception) {
+		LOGGER.error("infyInternException");
 		LOGGER.error(exception.getMessage(), exception);
-
-		String errorMessage = environment.getProperty(exception.getMessage());
-
 		ErrorInfo errorInfo = new ErrorInfo();
 		errorInfo.setErrorCode(HttpStatus.BAD_REQUEST.value());
+		System.out.println("Exception.getMessage : "+exception.getMessage());
+		System.out.println(" environment : "+environment.getProperty(exception.getMessage()));
+		errorInfo.setErrorMessage(environment.getProperty(exception.getMessage()));
 		return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
 	}
 
@@ -47,42 +46,39 @@ public class ExceptionControllerAdvice
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorInfo> generalExceptionHandler(Exception exception)
     {
-	LOGGER.error(exception.getMessage(), exception);
-	ErrorInfo errorInfo = new ErrorInfo();
-	errorInfo.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-	errorInfo.setErrorMessage(environment.getProperty("General.EXCEPTION_MESSAGE"));
-	return new ResponseEntity<>(errorInfo,
-				    HttpStatus.INTERNAL_SERVER_ERROR);
+		LOGGER.error("generalExceptionHandler");
+	    LOGGER.error(exception.getMessage(), exception);
+	    ErrorInfo errorInfo = new ErrorInfo();
+	    errorInfo.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	    errorInfo.setErrorMessage(environment.getProperty("General.EXCEPTION_MESSAGE"));
+		LOGGER.error(errorInfo);
+		return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-	@ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
+	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorInfo> validatorExceptionHandler(Exception exception)
+    public ResponseEntity<ErrorInfo> validatorExceptionHandler(MethodArgumentNotValidException exception)
     {
+		LOGGER.error("validatorExceptionHandler");
 	LOGGER.error(exception.getMessage(), exception);
-	String errorMsg;
-	if (exception instanceof MethodArgumentNotValidException)
-	{
-	    MethodArgumentNotValidException manvException = (MethodArgumentNotValidException) exception;
-	    errorMsg = manvException.getBindingResult()
+	String errorMsg = "Default";
+		errorMsg = exception.getBindingResult()
 				    .getAllErrors()
 				    .stream()
 				    .map(ObjectError::getDefaultMessage)
 				    .collect(Collectors.joining(", "));
-
-	}
-	else
-	{
-	    ConstraintViolationException cvException = (ConstraintViolationException) exception;
-	    errorMsg = cvException.getConstraintViolations()
-				  .stream()
-				  .map(ConstraintViolation::getMessage)
-				  .collect(Collectors.joining(", "));
-
-	}
 	ErrorInfo errorInfo = new ErrorInfo();
 	errorInfo.setErrorCode(HttpStatus.BAD_REQUEST.value());
 	errorInfo.setErrorMessage(errorMsg);
 	return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
+	@ExceptionHandler(ConstraintViolationException.class)
+	public static ResponseEntity<ErrorInfo> pathExceptionHandler(ConstraintViolationException exception) {
+		ErrorInfo errorInfo = new ErrorInfo();
+		errorInfo.setErrorCode(HttpStatus.BAD_REQUEST.value());
+		String errorMsg = exception.getConstraintViolations().stream().map(x -> x.getMessage())
+				.collect(Collectors.joining(", "));
+		errorInfo.setErrorMessage(errorMsg);
+		return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+	}
 }

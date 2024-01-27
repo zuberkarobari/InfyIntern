@@ -12,9 +12,9 @@ public class MentorDTO {
 	@NotNull(message = "{mentor.mentorid.absent}")
 	private Integer mentorId;
 
-    @NotNull(message = "Mentor Name is not Present")
+    @NotNull(message = "{project.mentor.absent}")
 	private String mentorName;
-	@NotNull(message = "Projects Mentored cannot be Null")
+	@NotNull(message = "{mentor.mentorid.invalid}")
 	private Integer numberOfProjectsMentored;
 
 	public MentorDTO() {

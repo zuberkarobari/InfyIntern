@@ -28,7 +28,6 @@ public class ProjectAllocationAPI {
 
     @PostMapping("/project")
     public ResponseEntity<String> allocateProject(@Valid @RequestBody ProjectDTO project) throws InfyInternException {
-        validateProjectDTO(project);
         Integer projectId = projectService.allocateProject(project);
         // Example success message retrieval from application.properties
         String successMessage = environment.getProperty("API.ALLOCATION_SUCCESS");
@@ -64,12 +63,5 @@ public class ProjectAllocationAPI {
         String successMessage = environment.getProperty("API.PROJECT_DELETE_SUCCESS");
 
         return new ResponseEntity<>(successMessage, HttpStatus.OK);
-    }
-    private void validateProjectDTO(ProjectDTO projectDTO) throws InfyInternException {
-        if (projectDTO == null || projectDTO.getProjectName() == null || projectDTO.getIdeaOwner() == null ||
-                projectDTO.getReleaseDate() == null || projectDTO.getMentorDTO() == null ||
-                projectDTO.getMentorDTO().getMentorId() == null) {
-            throw new InfyInternException("API.INVALID_PROJECT_INPUT");
-        }
     }
 }

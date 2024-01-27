@@ -1,11 +1,13 @@
 package com.infy.infyinterns.dto;
 
+import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 
-
+@Validated
 public class ProjectDTO {
 
 	private Integer projectId;
@@ -13,14 +15,15 @@ public class ProjectDTO {
 	@NotBlank(message = "{project.projectname.absent}")
 	private String projectName;
 
-	@NotNull(message = "Idea owner cannot be null")
+	@NotNull(message = "{project.ideaowner.absent}")
 	@Positive(message = "Idea owner must be a positive number")
 	private Integer ideaOwner;
-	@Future(message = "Release date must be in the future")
+	@Future(message = "{project.releasedate.absent}")
 	@NotNull(message = "Date cannot be Null")
 	private LocalDate releaseDate;
 
 	@Valid
+	@NotNull(message ="Please provide Mentor details")
 	public MentorDTO mentorDTO;
 	public ProjectDTO() {
 		super();

@@ -27,10 +27,10 @@ public class ProjectAllocationServiceImpl implements ProjectAllocationService {
 
 	@Override
 	public Integer allocateProject(ProjectDTO project) throws InfyInternException {
+		MentorDTO mentorDTO= project.getMentorDTO();
 
-		Integer mentorId = project.getMentorDTO().getMentorId();
-        validateProjectDTO(project);
-		Mentor mentor = mentorRepository.findById(mentorId)
+		validateField(project,mentorDTO);
+		Mentor mentor = mentorRepository.findById(mentorDTO.getMentorId())
 				.orElseThrow(() -> new InfyInternException("Service.MENTOR_NOT_FOUND"));
 		if (mentor.getNumberOfProjectsMentored() >= 3) {
 			throw new InfyInternException("Service.CANNOT_ALLOCATE_PROJECT");
@@ -49,11 +49,9 @@ public class ProjectAllocationServiceImpl implements ProjectAllocationService {
 	@Override
 	public List<MentorDTO> getMentors(Integer numberOfProjectsMentored) throws InfyInternException {
 		List<Mentor> mentors = mentorRepository.findByNumberOfProjectsMentored(numberOfProjectsMentored);
-
 		if (mentors.isEmpty()) {
 			throw new InfyInternException("Service.MENTOR_NOT_FOUND");
 		}
-
 		return mentors.stream()
 				.map(this::convertToMentorDTO)
 				.collect(Collectors.toList());
@@ -61,6 +59,9 @@ public class ProjectAllocationServiceImpl implements ProjectAllocationService {
 
 	@Override
 	public void updateProjectMentor(Integer projectId, Integer mentorId) throws InfyInternException {
+		if (!String.valueOf(mentorId).matches("\\d{4}")){
+			throw new InfyInternException("mentor.mentorid.invalid");
+		}
 		Mentor mentor = mentorRepository.findById(mentorId)
 				.orElseThrow(() -> new InfyInternException("Service.MENTOR_NOT_FOUND"));
 
@@ -79,12 +80,10 @@ public class ProjectAllocationServiceImpl implements ProjectAllocationService {
 	public void deleteProject(Integer projectId) throws InfyInternException {
 		Project project = projectRepository.findById(projectId)
 				.orElseThrow(() -> new InfyInternException("Service.PROJECT_NOT_FOUND"));
-
 		if (project.getMentor() != null) {
 			Mentor mentor = project.getMentor();
 			mentor.setNumberOfProjectsMentored(mentor.getNumberOfProjectsMentored() - 1);
 		}
-
 		projectRepository.delete(project);
 	}
 
@@ -95,11 +94,22 @@ public class ProjectAllocationServiceImpl implements ProjectAllocationService {
 		mentorDTO.setNumberOfProjectsMentored(mentor.getNumberOfProjectsMentored());
 		return mentorDTO;
 	}
-	private static void validateProjectDTO(ProjectDTO projectDTO) throws InfyInternException {
-		if (projectDTO == null || projectDTO.getProjectName() == null || projectDTO.getIdeaOwner() == null ||
-				projectDTO.getReleaseDate() == null || projectDTO.getMentorDTO() == null ||
-				projectDTO.getMentorDTO().getMentorId() == null) {
-			throw new InfyInternException("API.INVALID_PROJECT_INPUT");
+
+	private  static void validateField(ProjectDTO project,MentorDTO mentorDTO) throws InfyInternException {
+		if (mentorDTO.getMentorId()==null&&project.getIdeaOwner() == null&&project.getReleaseDate() == null&&project.getProjectName() == null){
+			throw new InfyInternException("project.all.fields.are.empty");
+		}
+		if (mentorDTO.getMentorId() == null) {
+			throw new InfyInternException("mentor.mentorid.absent");
+		}
+		if (project.getIdeaOwner() == null) {
+			throw new InfyInternException("project.ideaowner.absent");
+		}
+		if (project.getProjectName() == null) {
+			throw new InfyInternException("project.projectname.absent");
+		}
+		if (project.getReleaseDate() == null) {
+			throw new InfyInternException("project.releasedate.absent");
 		}
 	}
 }
