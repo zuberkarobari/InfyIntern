@@ -1,11 +1,11 @@
 package com.infy.infyinterns.dto;
 
 
-import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-
+@ConfigurationProperties(prefix = "project")
 public class MentorDTO {
 	@NotNull(message = "Mentor ID cannot be null")
 	@Positive(message = "Mentor ID must be a positive number")
