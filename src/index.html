@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infy Interns Project Allocation</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        h1, h2 {
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label {
+            font-weight: bold;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Infy Interns Project Allocation</h1>
+
+    <h2>Allocate Project</h2>
+    <form id="allocateProjectForm">
+        <div class="form-group">
+            <label for="projectName">Project Name:</label>
+            <input type="text" class="form-control" id="projectName" name="projectName" required>
+        </div>
+        <div class="form-group">
+            <label for="projectDescription">Project Description:</label>
+            <textarea class="form-control" id="projectDescription" name="projectDescription" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Allocate Project</button>
+    </form>
+
+    <h2>Update Project Mentor</h2>
+    <form id="updateProjectMentorForm">
+        <div class="form-group">
+            <label for="projectIdUpdate">Project ID:</label>
+            <input type="text" class="form-control" id="projectIdUpdate" name="projectIdUpdate" required>
+        </div>
+        <div class="form-group">
+            <label for="mentorIdUpdate">Mentor ID:</label>
+            <input type="text" class="form-control" id="mentorIdUpdate" name="mentorIdUpdate" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Project Mentor</button>
+    </form>
+
+    <h2>Delete Project</h2>
+    <form id="deleteProjectForm">
+        <div class="form-group">
+            <label for="projectIdDelete">Project ID:</label>
+            <input type="text" class="form-control" id="projectIdDelete" name="projectIdDelete" required>
+        </div>
+        <button type="submit" class="btn btn-danger">Delete Project</button>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+    document.getElementById('allocateProjectForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const projectName = document.getElementById('projectName').value;
+        const projectDescription = document.getElementById('projectDescription').value;
+
+        axios.post('/infyinterns/project', {
+            projectName: projectName,
+            projectDescription: projectDescription
+        }).then(response => {
+            alert('Project allocated successfully!');
+            console.log(response.data);
+        }).catch(error => {
+            console.error(error);
+            if (error.response) {
+                alert('An error occurred: ' + error.response.data.message);
+            } else if (error.request) {
+                alert('No response received from server.');
+            } else {
+                alert('Error in request setup: ' + error.message);
+            }
+        });
+    });
+
+    document.getElementById('updateProjectMentorForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const projectId = document.getElementById('projectIdUpdate').value;
+        const mentorId = document.getElementById('mentorIdUpdate').value;
+
+        axios.put(`/infyinterns/project/${projectId}/${mentorId}`)
+            .then(response => {
+                alert('Project mentor updated successfully!');
+                console.log(response.data);
+            }).catch(error => {
+                console.error(error);
+                if (error.response) {
+                    alert('An error occurred: ' + error.response.data.message);
+                } else if (error.request) {
+                    alert('No response received from server.');
+                } else {
+                    alert('Error in request setup: ' + error.message);
+                }
+            });
+    });
+
+    document.getElementById('deleteProjectForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const projectId = document.getElementById('projectIdDelete').value;
+
+        axios.delete(`/infyinterns/project/${projectId}`)
+            .then(response => {
+                alert('Project deleted successfully!');
+                console.log(response.data);
+            }).catch(error => {
+                console.error(error);
+                if (error.response) {
+                    alert('An error occurred: ' + error.response.data.message);
+                } else if (error.request) {
+                    alert('No response received from server.');
+                } else {
+                    alert('Error in request setup: ' + error.message);
+                }
+            });
+    });
+</script>
+</body>
+</html>
