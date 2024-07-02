@@ -28,14 +28,11 @@ public class ProjectAllocationAPI {
     private Environment environment;
 
     @PostMapping("/project")
-    public ResponseEntity<EntityModel<String>> allocateProject(@RequestBody @Valid ProjectDTO project) throws InfyInternException {
+    public ResponseEntity<String> allocateProject(@RequestBody @Valid ProjectDTO project) throws Exception {
         Integer projectId = projectService.allocateProject(project);
         String successMessage = environment.getProperty("API.ALLOCATION_SUCCESS");
         String responseMessage = successMessage + ": " + projectId;
-        Link selfLink = Link.of("/infyinterns/project/" + projectId);
-        EntityModel<String> entityModel = EntityModel.of(responseMessage, selfLink);
-
-        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
     @GetMapping("/project/{projectId}")
@@ -60,15 +57,12 @@ public class ProjectAllocationAPI {
     }
 
     @DeleteMapping("/project/{projectId}")
-    public ResponseEntity<EntityModel<String>> deleteProject(@PathVariable @Valid Integer projectId) throws InfyInternException {
-        projectService.deleteProject(projectId);
+    public ResponseEntity<String> deleteProject(@PathVariable @Valid Integer projectId) throws InfyInternException {
+        Integer deletedProject= projectService.deleteProject(projectId);
 
         String successMessage = environment.getProperty("API.PROJECT_DELETE_SUCCESS");
-
-        Link selfLink = Link.of("/infyinterns/project");
-        EntityModel<String> entityModel = EntityModel.of(successMessage, selfLink);
-
-        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        String responseMessage = successMessage + ": " + projectId;
+        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
     // Mentor CRUD Operations

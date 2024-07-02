@@ -1,15 +1,14 @@
 package com.infy.infyinterns.dto;
 
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
-@ConfigurationProperties(prefix = "project")
+@Validated
 public class MentorDTO {
-	@NotNull(message = "Mentor ID cannot be null")
-	@Positive(message = "Mentor ID must be a positive number")
+
 	@NotNull(message = "{mentor.mentorid.absent}")
+	@Positive(message = "Mentor ID must be a positive number")
 	private Integer mentorId;
 
     @NotNull(message = "{project.mentor.absent}")
@@ -17,17 +16,7 @@ public class MentorDTO {
 	@NotNull(message = "{mentor.mentorid.invalid}")
 	private Integer numberOfProjectsMentored;
 
-	public MentorDTO() {
-		super();
-	}
-
-	public MentorDTO(Integer mentorId, String mentorName, Integer numberOfProjectsMentored) {
-		super();
-		this.mentorId = mentorId;
-		this.mentorName = mentorName;
-		this.numberOfProjectsMentored = numberOfProjectsMentored;
-	}
-
+	// Getters and Setters
 	public Integer getMentorId() {
 		return mentorId;
 	}
@@ -51,5 +40,4 @@ public class MentorDTO {
 	public void setNumberOfProjectsMentored(Integer numberOfProjectsMentored) {
 		this.numberOfProjectsMentored = numberOfProjectsMentored;
 	}
-
 }

@@ -9,11 +9,11 @@ import java.util.List;
 public interface ProjectAllocationService {
 
 	// Project CRUD Operations
-	Integer allocateProject(ProjectDTO project) throws InfyInternException;
+	Integer allocateProject(ProjectDTO project) throws Exception;
 	ProjectDTO getProject(Integer projectId) throws InfyInternException;
 	List<ProjectDTO> getAllProjects() throws InfyInternException;
 	void updateProject(Integer projectId, ProjectDTO project) throws InfyInternException;
-	void deleteProject(Integer projectId) throws InfyInternException;
+	Integer deleteProject(Integer projectId) throws InfyInternException;
 
 	// Mentor CRUD Operations
 	Integer addMentor(MentorDTO mentor) throws InfyInternException;

@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 
-
 @Validated
 public class ProjectDTO {
 
@@ -20,26 +19,14 @@ public class ProjectDTO {
 	@NotNull(message = "{project.ideaowner.absent}")
 	@Positive(message = "Idea owner must be a positive number")
 	private Integer ideaOwner;
-	//@Future(message = "{project.releasedate.absent}")
+
 	@NotNull(message = "Date cannot be Null")
+	@Future(message = "Release date must be a future date")
 	private LocalDate releaseDate;
+    @NotNull(message = "Mentor cannot be Null")
+	private MentorDTO mentorDTO;
 
-	 MentorDTO mentorDTO;
-	public ProjectDTO() {
-		super();
-	}
-
-	public ProjectDTO(Integer projectId, String projectName,
-			Integer ideaOwner, LocalDate releaseDate,
-			MentorDTO mentorDTO) {
-		super();
-		this.projectId = projectId;
-		this.projectName = projectName;
-		this.ideaOwner = ideaOwner;
-		this.releaseDate = releaseDate;
-		this.mentorDTO = mentorDTO;
-	}
-
+	// Getters and Setters
 	public Integer getProjectId() {
 		return projectId;
 	}
@@ -79,5 +66,4 @@ public class ProjectDTO {
 	public void setMentorDTO(MentorDTO mentorDTO) {
 		this.mentorDTO = mentorDTO;
 	}
-
 }
